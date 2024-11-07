@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-tomcat-deployment
+  labels:
+    app: java-tomcat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java-tomcat
+  template:
+    metadata:
+      labels:
+        app: java-tomcat
+    spec:
+      containers:
+      - name: java-tomcat-container
+        image: thejasbp/javainternals1:v1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: JAVA_OPTS
+          value: "-Xms512m -Xmx1024m" # Adjust JVM options as necessary
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
